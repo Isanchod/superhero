@@ -5,16 +5,8 @@ import edu.iesam.superheroes.features.superheroes.domain.ObtainSuperHeroeUseCase
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
 
 class SuperHeroesListViewModel(private val obtainSuperHeroeUseCase: ObtainSuperHeroeUseCase) {
-    fun getSuperHeroes(): List<SuperHeroe> {
-        val superHeroes = obtainSuperHeroeUseCase.invoke()
-        superHeroes.fold(
-            {
-                superHeroes ->
-            },
-            {
-                errorApp ->
-            }
+    fun getSuperHeroes(): Result<List<SuperHeroe>> {
+        return obtainSuperHeroeUseCase.invoke()
 
-        )
     }
 }

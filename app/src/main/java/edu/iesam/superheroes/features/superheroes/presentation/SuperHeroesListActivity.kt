@@ -8,7 +8,9 @@ import androidx.core.view.WindowInsetsCompat
 import edu.iesam.superheroes.R
 import edu.iesam.superheroes.features.superheroes.data.SuperheroeDataRepository
 import edu.iesam.superheroes.features.superheroes.data.remote.SuperHeroesApiRemoteDataSource
+import edu.iesam.superheroes.features.superheroes.domain.ErrorApp
 import edu.iesam.superheroes.features.superheroes.domain.ObtainSuperHeroeUseCase
+import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
 
 class SuperHeroesListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,4 +33,27 @@ class SuperHeroesListActivity : AppCompatActivity() {
         val superHeroes = superHeroesListViewModel.getSuperHeroes()
     }
 
+    fun getSuperHeroes(superHeroesListViewModel : SuperHeroesListViewModel){
+        val superHeroes = superHeroesListViewModel.getSuperHeroes()
+        superHeroes.fold(
+            {
+                superHeroes -> printSuperHeroes(superHeroes)
+            },
+            {
+                errorApp -> getSuperHeroesOnFailure(errorApp as ErrorApp)
+            }
+        )
+
+    }
+
+    fun printSuperHeroes(superHeroes: List<SuperHeroe>) {
+        //función para imprimir los supeheroes en una activity, de momento solo imprime en la terminal
+        print(superHeroes)
+    }
+
+    fun getSuperHeroesOnFailure(errorApp: ErrorApp) {
+        when(errorApp){
+            ErrorApp.ApiError -> {print("Ha ocurrido un error al recuperar los superhéroes")}
+        }
+    }
 }
