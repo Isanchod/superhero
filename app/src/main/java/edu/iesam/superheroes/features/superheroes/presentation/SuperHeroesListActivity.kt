@@ -6,8 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import edu.iesam.superheroes.R
-import edu.iesam.superheroes.features.superheroes.data.SuperheroeDataRepository
-import edu.iesam.superheroes.features.superheroes.data.remote.SuperHeroesApiRemoteDataSource
+import edu.iesam.superheroes.features.superheroes.data.SuperHeroDataRepository
+import edu.iesam.superheroes.features.superheroes.data.remote.api.SuperHeroesApiRemoteDataSource
 import edu.iesam.superheroes.features.superheroes.domain.ErrorApp
 import edu.iesam.superheroes.features.superheroes.domain.ObtainSuperHeroeUseCase
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
@@ -26,7 +26,7 @@ class SuperHeroesListActivity : AppCompatActivity() {
         //val supeheroes = //
         val superHeroesListViewModel: SuperHeroesListViewModel = SuperHeroesListViewModel(
             ObtainSuperHeroeUseCase(
-                SuperheroeDataRepository(
+                SuperHeroDataRepository(
                     SuperHeroesApiRemoteDataSource()
                 ))
         )
