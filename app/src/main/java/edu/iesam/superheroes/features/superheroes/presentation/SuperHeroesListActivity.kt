@@ -1,16 +1,19 @@
 package edu.iesam.superheroes.features.superheroes.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import edu.iesam.superheroes.R
+import edu.iesam.superheroes.core.api.ApiClient
 import edu.iesam.superheroes.features.superheroes.data.SuperHeroDataRepository
 import edu.iesam.superheroes.features.superheroes.data.remote.api.SuperHeroesApiRemoteDataSource
 import edu.iesam.superheroes.features.superheroes.domain.ErrorApp
 import edu.iesam.superheroes.features.superheroes.domain.ObtainSuperHeroeUseCase
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
+import kotlin.concurrent.thread
 
 class SuperHeroesListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,23 +30,12 @@ class SuperHeroesListActivity : AppCompatActivity() {
         val superHeroesListViewModel: SuperHeroesListViewModel = SuperHeroesListViewModel(
             ObtainSuperHeroeUseCase(
                 SuperHeroDataRepository(
-                    SuperHeroesApiRemoteDataSource()
+                    SuperHeroesApiRemoteDataSource(
+                        ApiClient()
+                    )
                 ))
         )
-        val superHeroes = superHeroesListViewModel.getSuperHeroes()
-    }
-
-    fun getSuperHeroes(superHeroesListViewModel : SuperHeroesListViewModel){
-        val superHeroes = superHeroesListViewModel.getSuperHeroes()
-        superHeroes.fold(
-            {
-                superHeroes -> printSuperHeroes(superHeroes)
-            },
-            {
-                errorApp -> getSuperHeroesOnFailure(errorApp as ErrorApp)
-            }
-        )
-
+        loadSuperHeroes()
     }
 
     fun printSuperHeroes(superHeroes: List<SuperHeroe>) {
@@ -51,9 +43,11 @@ class SuperHeroesListActivity : AppCompatActivity() {
         print(superHeroes)
     }
 
-    fun getSuperHeroesOnFailure(errorApp: ErrorApp) {
-        when(errorApp){
-            ErrorApp.ApiError -> {print("Ha ocurrido un error al recuperar los superhéroes")}
+    private fun loadSuperHeroes(){
+        val apiRemote = SuperHeroesApiRemoteDataSource(ApiClient())
+        thread {
+            val models = apiRemote.getSuperHeroes()
+            models
         }
     }
 }
