@@ -9,15 +9,26 @@ import okhttp3.Dispatcher
 
 class SuperHeroesApiRemoteDataSource (private val apiClient: ApiClient){
     suspend fun getSuperHeroes(): Result<List<SuperHeroe>> {
-        withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             val apiService = apiClient.createService(SuperHeroApiService::class.java)
-            val resultSuperHero = apiService.findAll().execute()
+            val resultSuperHero = apiService.findAll()
             if(resultSuperHero.isSuccessful && resultSuperHero.errorBody() == null){
-                return Result.success(resultSuperHero.body()!!.map { superHeroApiModel ->
+                Result.success(resultSuperHero.body()!!.map { superHeroApiModel ->
                     superHeroApiModel.toModel()
                 })
             } else {
-                return Result.failure(ErrorApp.ServerError)
+                Result.failure(ErrorApp.ServerError)
+            }
+        }
+    }
+    suspend fun getSuperHeroesById(id: String) : Result<SuperHeroe> {
+        return withContext(Dispatchers.IO) {
+            val apiService = apiClient.createService(SuperHeroApiService::class.java)
+            val resultSuperHero = apiService.findById(id)
+            if(resultSuperHero.isSuccessful && resultSuperHero.errorBody() == null) {
+                Result.success(resultSuperHero.body()!!.toModel())
+            } else {
+                Result.failure(ErrorApp.ServerError)
             }
         }
     }

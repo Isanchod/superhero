@@ -1,5 +1,6 @@
 package edu.iesam.superheroes.features.superheroes.domain
 
 interface SuperheroeRepository {
-    fun getSuperHeroes():Result<List<SuperHeroe>>
+    suspend fun getSuperHeroes():Result<List<SuperHeroe>>
+    suspend fun getSuperHeroesById(id: String):Result<SuperHeroe>
 }

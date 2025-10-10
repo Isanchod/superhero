@@ -8,7 +8,11 @@ class SuperHeroDataRepository(
     private val superHeroesApiRemoteDataSource: SuperHeroesApiRemoteDataSource,
 ) : SuperheroeRepository {
 
-    override fun getSuperHeroes(): Result<List<SuperHeroe>> {
+    override suspend fun getSuperHeroes(): Result<List<SuperHeroe>> {
         return superHeroesApiRemoteDataSource.getSuperHeroes()
+    }
+
+    override suspend fun getSuperHeroesById(id: String): Result<SuperHeroe> {
+        return superHeroesApiRemoteDataSource.getSuperHeroesById(id)
     }
 }

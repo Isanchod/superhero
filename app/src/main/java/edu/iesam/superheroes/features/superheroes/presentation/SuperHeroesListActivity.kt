@@ -11,6 +11,7 @@ import edu.iesam.superheroes.core.api.ApiClient
 import edu.iesam.superheroes.features.superheroes.data.SuperHeroDataRepository
 import edu.iesam.superheroes.features.superheroes.data.remote.api.SuperHeroesApiRemoteDataSource
 import edu.iesam.superheroes.features.superheroes.domain.ErrorApp
+import edu.iesam.superheroes.features.superheroes.domain.ObtainSuperHeroeByIdUseCase
 import edu.iesam.superheroes.features.superheroes.domain.ObtainSuperHeroeUseCase
 import edu.iesam.superheroes.features.superheroes.domain.SuperHeroe
 import kotlin.concurrent.thread
@@ -27,15 +28,19 @@ class SuperHeroesListActivity : AppCompatActivity() {
         }
         //llamada
         //val supeheroes = //
-        val superHeroesListViewModel: SuperHeroesListViewModel = SuperHeroesListViewModel(
+        val superHeroeListViewModel = SuperHeroesListViewModel(
             ObtainSuperHeroeUseCase(
                 SuperHeroDataRepository(
-                    SuperHeroesApiRemoteDataSource(
-                        ApiClient()
-                    )
-                ))
+                    SuperHeroesApiRemoteDataSource(ApiClient())
+                )
+            ),
+            ObtainSuperHeroeByIdUseCase(
+                SuperHeroDataRepository(
+                    SuperHeroesApiRemoteDataSource(ApiClient())
+                )
+            )
         )
-        loadSuperHeroes()
+        val superHeroes = superHeroeListViewModel.loadSuperHeroesById("1")
     }
 
     fun printSuperHeroes(superHeroes: List<SuperHeroe>) {
@@ -45,9 +50,9 @@ class SuperHeroesListActivity : AppCompatActivity() {
 
     private fun loadSuperHeroes(){
         val apiRemote = SuperHeroesApiRemoteDataSource(ApiClient())
-        thread {
-            val models = apiRemote.getSuperHeroes()
-            models
-        }
+//        thread {
+//            val models = apiRemote.getSuperHeroes()
+//            models
+//        }
     }
 }
