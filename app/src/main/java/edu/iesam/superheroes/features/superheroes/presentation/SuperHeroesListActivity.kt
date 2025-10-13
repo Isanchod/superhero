@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import edu.iesam.superheroes.R
 import edu.iesam.superheroes.core.api.ApiClient
 import edu.iesam.superheroes.features.superheroes.data.SuperHeroDataRepository
@@ -28,31 +29,47 @@ class SuperHeroesListActivity : AppCompatActivity() {
         }
         //llamada
         //val supeheroes = //
-        val superHeroeListViewModel = SuperHeroesListViewModel(
-            ObtainSuperHeroeUseCase(
-                SuperHeroDataRepository(
-                    SuperHeroesApiRemoteDataSource(ApiClient())
-                )
-            ),
-            ObtainSuperHeroeByIdUseCase(
-                SuperHeroDataRepository(
-                    SuperHeroesApiRemoteDataSource(ApiClient())
-                )
+        setUpObserver()
+        val superHeroes = viewModel.loadSuperHeroesById("1")
+
+    }
+
+    private val viewModel = SuperHeroesListViewModel(
+        ObtainSuperHeroeUseCase(
+            SuperHeroDataRepository(
+                SuperHeroesApiRemoteDataSource(ApiClient())
+            )
+        ),
+        ObtainSuperHeroeByIdUseCase(
+            SuperHeroDataRepository(
+                SuperHeroesApiRemoteDataSource(ApiClient())
             )
         )
-        val superHeroes = superHeroeListViewModel.loadSuperHeroesById("1")
-    }
+    )
 
     fun printSuperHeroes(superHeroes: List<SuperHeroe>) {
         //función para imprimir los supeheroes en una activity, de momento solo imprime en la terminal
         print(superHeroes)
     }
 
-    private fun loadSuperHeroes(){
-        val apiRemote = SuperHeroesApiRemoteDataSource(ApiClient())
-//        thread {
-//            val models = apiRemote.getSuperHeroes()
-//            models
-//        }
+    private fun setUpObserver(){
+        val observer = Observer<SuperHeroesListViewModel.UiState>{ uiState ->
+            if (uiState.isLoading){
+                //Muestro un spiner
+            } else {
+                //Oculto el Spinner
+            }
+            //El viewModel me pasa el uiState
+            uiState.error?.let {
+                //visualizar pantalla de error
+            } ?: {
+                //Ocultar error
+            }
+
+            uiState.superHeroes?.let { superHeroes ->
+                superHeroes
+            }
+        }
+        viewModel.uiState.observe(this, observer)
     }
 }
